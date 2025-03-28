@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeGuardian - Emergency Contacts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-address-book"></i>
+                <h1>SafeGuardian Contacts</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="./index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="./tracking.html"><i class="fas fa-map-marker-alt"></i> Tracking</a></li>
+                    <li><a href="./contacts.html"><i class="fas fa-address-book"></i> Contacts</a></li>
+                    <li><a href="./about.html"><i class="fas fa-cog"></i> About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <section class="contacts-section">
+            <h2>Emergency Contacts Management</h2>
+            
+            <div class="contacts-overview">
+                <div class="contact-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <h3 id="total-contacts">0</h3>
+                            <p>Total Contacts</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <h3 id="primary-contact">Not Set</h3>
+                            <p>Primary Emergency Contact</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-management">
+                <div class="add-contact-section">
+                    <h3>Add New Emergency Contact</h3>
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Contact Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}">
+                            <small>10-digit phone number</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="relationship">Relationship</label>
+                            <select id="relationship" name="relationship">
+                                <option value="family">Family</option>
+                                <option value="friend">Friend</option>
+                                <option value="partner">Partner</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="priority">Priority Level</label>
+                            <div class="priority-selector">
+                                <input type="radio" id="priority-high" name="priority" value="high">
+                                <label for="priority-high" class="priority-label">High</label>
+                                
+                                <input type="radio" id="priority-medium" name="priority" value="medium" checked>
+                                <label for="priority-medium" class="priority-label">Medium</label>
+                                
+                                <input type="radio" id="priority-low" name="priority" value="low">
+                                <label for="priority-low" class="priority-label">Low</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Notification Preferences</label>
+                            <div class="notification-preferences">
+                                <label>
+                                    <input type="checkbox" name="notification" value="sms" checked>
+                                    SMS
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="notification" value="call">
+                                    Voice Call
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="notification" value="email">
+                                    Email
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Contact
+                        </button>
+                    </form>
+                </div>
+
+                <div class="saved-contacts-section">
+                    <h3>Saved Emergency Contacts</h3>
+                    <div id="contact-list" class="contact-cards">
+                        <!-- Dynamically added contacts will appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="emergency-protocols">
+                <h3>Emergency Contact Protocols</h3>
+                <div class="protocol-cards">
+                    <div class="protocol-card">
+                        <i class="fas fa-phone-alt"></i>
+                        <h4>Automatic Calling</h4>
+                        <p>Initiate calls to emergency contacts in sequence</p>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="auto-call-toggle">
+                            <label for="auto-call-toggle"></label>
+                        </div>
+                    </div>
+                    <div class="protocol-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h4>Location Sharing</h4>
+                        <p>Automatically share live location</p>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="location-share-toggle">
+                            <label for="location-share-toggle"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 SafeGuardian Contacts | Stay Connected</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy</a>
+                <a href="#terms">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const contactForm = document.getElementById('contact-form');
+            const contactList = document.getElementById('contact-list');
+            const totalContactsEl = document.getElementById('total-contacts');
+            const primaryContactEl = document.getElementById('primary-contact');
+
+            let contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+
+            function renderContacts() {
+                contactList.innerHTML = '';
+                totalContactsEl.textContent = contacts.length;
+
+                if (contacts.length > 0) {
+                    primaryContactEl.textContent = contacts[0].name;
+                }
+
+                contacts.forEach((contact, index) => {
+                    const contactCard = document.createElement('div');
+                    contactCard.classList.add('contact-card');
+                    contactCard.innerHTML = `
+                        <div class="contact-info">
+                            <h4>${contact.name}</h4>
+                            <p>${contact.phone}</p>
+                            <span class="priority-badge priority-${contact.priority}">${contact.priority} Priority</span>
+                        </div>
+                        <div class="contact-actions">
+                            <button class="edit-btn" data-index="${index}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-btn" data-index="${index}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    contactList.appendChild(contactCard);
+                });
+
+                attachContactActions();
+            }
+
+            function attachContactActions() {
+                const editButtons = document.querySelectorAll('.edit-btn');
+                const deleteButtons = document.querySelectorAll('.delete-btn');
+
+                editButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = e.currentTarget.dataset.index;
+                        const contact = contacts[index];
+                        
+                        document.getElementById('name').value = contact.name;
+                        document.getElementById('phone').value = contact.phone;
+                        document.getElementById('relationship').value = contact.relationship;
+                        document.querySelector(`input[name="priority"][value="${contact.priority}"]`).checked = true;
+
+                        contacts.splice(index, 1);
+                        renderContacts();
+                        saveContacts();
+                    });
+                });
+
+                deleteButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = e.currentTarget.dataset.index;
+                        contacts.splice(index, 1);
+                        renderContacts();
+                        saveContacts();
+                    });
+                });
+            }
+
+            function saveContacts() {
+                localStorage.setItem('emergencyContacts', JSON.stringify(contacts));
+            }
+
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+                const relationship = document.getElementById('relationship').value;
+                const priority = document.querySelector('input[name="priority"]:checked').value;
+                const notifications = Array.from(document.querySelectorAll('input[name="notification"]:checked'))
+                    .map(el => el.value);
+
+                const newContact = {
+                    name, 
+                    phone, 
+                    relationship, 
+                    priority,
+                    notifications
+                };
+
+                contacts.push(newContact);
+                renderContacts();
+                saveContacts();
+
+                contactForm.reset();
+            });
+
+            renderContacts();
+        });
+    </script>
+</body>
+</html>

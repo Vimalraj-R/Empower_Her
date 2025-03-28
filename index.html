@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeGuardian - Personal Safety App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>SafeGuardian</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="./index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="./tracking.html"><i class="fas fa-map-marker-alt"></i> Live Tracking</a></li>
+                    <li><a href="./contacts.html"><i class="fas fa-address-book"></i> Emergency Contacts</a></li>
+                    <li><a href="./about.html"><i class="fas fa-cog"></i> About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <section id="sos-section" class="sos-section">
+            <div class="sos-content">
+                <h2>Emergency SOS</h2>
+                <button id="sos-button">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Send SOS
+                </button>
+                <p>Press and hold for 3 seconds to activate emergency mode</p>
+            </div>
+        </section>
+
+        <section id="quick-actions" class="quick-actions">
+            <h2>Quick Safety Tools</h2>
+            <div class="action-grid">
+                <div class="action-card">
+                    <i class="fas fa-phone-alt"></i>
+                    <h3>Fake Call</h3>
+                    <p>Simulate an incoming call</p>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-walking"></i>
+                    <h3>Safety Walk</h3>
+                    <p>Track your journey home</p>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-bell"></i>
+                    <h3>Check On Me</h3>
+                    <p>Set a safety timer</p>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-user-friends"></i>
+                    <h3>Share Location</h3>
+                    <p>Send live location</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="emergency-contacts" class="emergency-contacts">
+            <h2>Emergency Contacts</h2>
+            <div class="contacts-list">
+                <div class="contact-card">
+                    <i class="fas fa-user-circle"></i>
+                    <div class="contact-info">
+                        <h3>Mom</h3>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                    <div class="contact-actions">
+                        <button class="call-btn"><i class="fas fa-phone"></i></button>
+                        <button class="message-btn"><i class="fas fa-sms"></i></button>
+                    </div>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-user-circle"></i>
+                    <div class="contact-info">
+                        <h3>Dad</h3>
+                        <p>+1 (555) 987-6543</p>
+                    </div>
+                    <div class="contact-actions">
+                        <button class="call-btn"><i class="fas fa-phone"></i></button>
+                        <button class="message-btn"><i class="fas fa-sms"></i></button>
+                    </div>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <div class="contact-info">
+                        <h3>Local Police</h3>
+                        <p>Emergency Services</p>
+                    </div>
+                    <div class="contact-actions">
+                        <button class="call-btn"><i class="fas fa-phone"></i></button>
+                    </div>
+                </div>
+            </div>
+            <button class="manage-contacts-btn">
+                <i class="fas fa-user-plus"></i> Manage Contacts
+            </button>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 SafeGuardian. All Rights Reserved.</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

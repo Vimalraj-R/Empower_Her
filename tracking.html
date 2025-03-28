@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeGuardian - Live Location Tracking</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-map-marker-alt"></i>
+                <h1>SafeGuardian Tracking</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="tracking.html"><i class="fas fa-map-signs"></i> Live Tracking</a></li>
+                    <li><a href="contacts.html"><i class="fas fa-address-book"></i> Contacts</a></li>
+                    <li><a href="./about.html"><i class="fas fa-cog"></i> About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <section class="tracking-section">
+            <h2>Live Location Tracking</h2>
+            <div class="tracking-info">
+                <div class="location-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-map-marker"></i>
+                        <div>
+                            <h3 id="current-location">Loading Location...</h3>
+                            <p>Current Position</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <div>
+                            <h3 id="accuracy">Checking Accuracy...</h3>
+                            <p>Location Precision</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="map" class="tracking-map"></div>
+
+            <div class="tracking-controls">
+                <button id="share-location" class="btn-primary">
+                    <i class="fas fa-share-alt"></i> Share Location
+                </button>
+                <button id="start-safety-track" class="btn-secondary">
+                    <i class="fas fa-walking"></i> Start Safety Track
+                </button>
+            </div>
+
+            <div class="safety-tracking-details">
+                <h3>Safety Tracking Mode</h3>
+                <div class="tracking-mode-info">
+                    <p>🔴 Status: <span id="tracking-status">Inactive</span></p>
+                    <p>⏱️ Duration: <span id="tracking-duration">00:00:00</span></p>
+                    <p>📍 Check-in Interval: Every 15 minutes</p>
+                </div>
+            </div>
+
+            <div class="emergency-alerts">
+                <h3>Emergency Protocols</h3>
+                <div class="alert-options">
+                    <div class="alert-card">
+                        <i class="fas fa-phone"></i>
+                        <h4>Auto Emergency Call</h4>
+                        <p>Activate if no check-in detected</p>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="auto-call-toggle">
+                            <label for="auto-call-toggle"></label>
+                        </div>
+                    </div>
+                    <div class="alert-card">
+                        <i class="fas fa-sms"></i>
+                        <h4>Location Updates</h4>
+                        <p>Send periodic location texts</p>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="location-update-toggle">
+                            <label for="location-update-toggle"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 SafeGuardian Tracking | Stay Safe</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy</a>
+                <a href="#terms">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const map = L.map('map').setView([12.9716, 77.5946], 13);
+            const currentLocationEl = document.getElementById('current-location');
+            const accuracyEl = document.getElementById('accuracy');
+            const shareLocationBtn = document.getElementById('share-location');
+            const safetyTrackBtn = document.getElementById('start-safety-track');
+            const trackingStatusEl = document.getElementById('tracking-status');
+            const trackingDurationEl = document.getElementById('tracking-duration');
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            function updateLocation(position) {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                const userLocation = [userLat, userLng];
+
+                currentLocationEl.textContent = `${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+                accuracyEl.textContent = `±${position.coords.accuracy.toFixed(2)} meters`;
+
+                map.setView(userLocation, 15);
+                L.marker(userLocation)
+                    .addTo(map)
+                    .bindPopup("Your Current Location")
+                    .openPopup();
+            }
+
+            function handleLocationError(error) {
+                currentLocationEl.textContent = "Location Unavailable";
+                accuracyEl.textContent = error.message;
+            }
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(updateLocation, handleLocationError, {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                });
+            }
+
+            shareLocationBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(currentLocationEl.textContent)
+                    .then(() => alert('Location copied to clipboard and shared!'))
+                    .catch(err => console.error('Could not copy text: ', err));
+            });
+
+            let trackingInterval, startTime;
+            safetyTrackBtn.addEventListener('click', () => {
+                if (trackingStatusEl.textContent === 'Inactive') {
+                    trackingStatusEl.textContent = 'Active';
+                    safetyTrackBtn.textContent = 'Stop Safety Track';
+                    startTime = new Date();
+
+                    trackingInterval = setInterval(() => {
+                        const currentTime = new Date();
+                        const duration = new Date(currentTime - startTime);
+                        trackingDurationEl.textContent = duration.toISOString().substr(11, 8);
+                    }, 1000);
+                } else {
+                    trackingStatusEl.textContent = 'Inactive';
+                    safetyTrackBtn.textContent = 'Start Safety Track';
+                    clearInterval(trackingInterval);
+                    trackingDurationEl.textContent = '00:00:00';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
